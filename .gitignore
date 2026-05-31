@@ -40,4 +40,8 @@
 # debug information files
 *.dwo
 
+patch-2
 *.exe
+main
+*.txt
+12-Matrix
