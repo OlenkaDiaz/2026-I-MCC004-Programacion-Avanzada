@@ -1,5 +1,7 @@
 from matrix_py import Matrix1
 
+print("Demo: usar matriz de C++ desde Python")
+
 A = Matrix1(2, 2)
 B = Matrix1(2, 2)
 
@@ -15,11 +17,24 @@ B[1][1] = 8
 
 C = A * B
 
-print("Matriz A:")
+print("\nMatriz A:")
 print(A)
 
-print("Matriz B:")
+print("\nMatriz B:")
 print(B)
 
-print("Resultado C = A * B:")
+print("\nResultado C = A * B:")
 print(C)
+
+print("\nExtra: usar get y set")
+A.set(0, 0, 10)
+print("Nuevo valor de A[0][0]:", A.get(0, 0))
+
+print("\nExtra: filas y columnas")
+print("Filas de A:", A.rows())
+print("Columnas de A:", A.cols())
+
+print("\nDemo de m[3][2] = 8")
+M = Matrix1(4, 4)
+M[3][2] = 8
+print(M)
