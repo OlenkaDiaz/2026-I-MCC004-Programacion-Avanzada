@@ -17,6 +17,7 @@ class Matrix1 {
         size_t   m_rows = 0, m_cols = 0;
     public:
         Matrix1()      { }
+        Matrix1(size_t rows, size_t cols);
 
         Matrix1(const Matrix1 &other); // Copy constructor
         Matrix1(Matrix1 &&other);      // Move constructor
@@ -25,7 +26,16 @@ class Matrix1 {
 
         Matrix1 &operator=(const Matrix1 &other);
         Matrix1 &operator=(Matrix1 &&other);
+        
+        T* operator[](size_t row);
+        const T* operator[](size_t row) const;
 
+        T Get(size_t row, size_t col) const;
+        void Set(size_t row, size_t col, T value);
+
+        size_t Rows() const;
+        size_t Cols() const;
+        
         void     Create();
         istream &Read(istream &is);
         template <typename Func, typename... Args>
@@ -40,8 +50,52 @@ class Matrix1 {
         Matrix1 operator-(const Matrix1 &other) const;
         Matrix1 operator*(const Matrix1 &other) const;
         Matrix1 operator*(T value) const;
+        
 };
+template <typename T>
+Matrix1<T>::Matrix1(size_t rows, size_t cols) {
+    m_rows = rows;
+    m_cols = cols;
+    Create();
 
+    for(size_t i = 0; i < m_rows; ++i)
+        for(size_t j = 0; j < m_cols; ++j)
+            m_pMat[i][j] = 0;
+}
+
+template <typename T>
+T* Matrix1<T>::operator[](size_t row) {
+    assert(row < m_rows);
+    return m_pMat[row];
+}
+
+template <typename T>
+const T* Matrix1<T>::operator[](size_t row) const {
+    assert(row < m_rows);
+    return m_pMat[row];
+}
+
+template <typename T>
+T Matrix1<T>::Get(size_t row, size_t col) const {
+    assert(row < m_rows && col < m_cols);
+    return m_pMat[row][col];
+}
+
+template <typename T>
+void Matrix1<T>::Set(size_t row, size_t col, T value) {
+    assert(row < m_rows && col < m_cols);
+    m_pMat[row][col] = value;
+}
+
+template <typename T>
+size_t Matrix1<T>::Rows() const {
+    return m_rows;
+}
+
+template <typename T>
+size_t Matrix1<T>::Cols() const {
+    return m_cols;
+}
 template <typename T>
 void Matrix1<T>::Create() {
     assert(m_rows > 0 && m_cols > 0);

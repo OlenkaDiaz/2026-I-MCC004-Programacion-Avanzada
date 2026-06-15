@@ -267,3 +267,13 @@ void DemoPointersMoveConstructor()
     cout << "\nResultado de m1 = 5*m2 + m3*m4:\n";
     cout << m1;
 }
+void DemoMatrixCorchetes() {
+    cout << "\nDemo usando operador corchete\n";
+
+    Matrix1<int> m(4, 4);
+
+    m[3][2] = 8;
+
+    cout << "Matriz m:\n";
+    cout << m;
+}

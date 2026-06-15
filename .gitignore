@@ -42,3 +42,9 @@
 
 main
 *.txt
+
+build/
+__pycache__/
+*.pyd
+*.so
+*.egg-info/
