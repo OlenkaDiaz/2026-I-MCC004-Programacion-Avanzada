@@ -23,6 +23,11 @@ int main() {
     // DemoPointersVector3();
     //DemoPointersVector4();
     //DemoPointersVector5();
+
+    DemoMatrixCorchetes();
+
+    cout << endl;
+    
     DemoPointersMoveConstructor();
     return 0;
 }
