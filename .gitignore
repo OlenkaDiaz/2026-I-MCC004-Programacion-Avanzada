@@ -48,3 +48,9 @@ __pycache__/
 *.pyd
 *.so
 *.egg-info/
+
+*.exe
+*.pyd
+build/
+__pycache__/
+.vscode/
