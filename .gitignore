@@ -54,3 +54,19 @@ __pycache__/
 build/
 __pycache__/
 .vscode/
+
+git add Doxyfile .gitignore TareaMatrix/DemoCPP.cpp
+>> git commit -m "Agregar documentacion con Doxygen"
+>> git status
+warning: in the working copy of 'Doxyfile', LF will be replaced by CRLF the next time Git touches it
+[16-Matrix 0d375e1] Agregar documentacion con Doxygen
+ 1 file changed, 3093 insertions(+)
+ create mode 100644 Doxyfile
+On branch 16-Matrix
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        documentacion/
+
+nothing added to commit but untracked files present (use "git add" to track)
+/documentacion/
+/documentacion/
