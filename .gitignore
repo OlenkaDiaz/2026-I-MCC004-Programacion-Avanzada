@@ -42,3 +42,23 @@
 
 main
 *.txt
+
+# Archivos generados por Python y pybind11
+*.pyd
+__pycache__/
+build/
+
+# Configuración local de VS Code
+.vscode/
+
+# Documentación generada por Doxygen
+documentacion/
+
+# Compilación generada por VTK
+vtk/build/
+
+# Ejecutables generados por CUDA
+cuda/*.exe
+
+# Permitir el archivo de configuración de VTK
+!vtk/CMakeLists.txt
