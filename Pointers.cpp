@@ -1,13 +1,12 @@
 #include <iostream> // cout, cin, endl
 #include <fstream>  // ofstream
-#include <sstream>
-#include "matrix1.h"
 #include "Pointers.h"
 #include "util.h"
 #include "array1.h"
 #include "array2.h"
 #include "array3.h"
 #include "array4.h"
+#include "X.h"
 
 using namespace std;
 
@@ -231,49 +230,101 @@ void DemoPointersVector5(){
 void DemoPointersMatrix1(){
 }
 
-void DemoPointersMoveConstructor()
-{
-    cout << "\nDemo de matrices con constructores\n";
+void Print1(string str, X &x)  { cout << str << x.ToString() << endl; }
+void Print1(string str, X *px) { Print1(str, *px); }
 
-    Matrix1<int> m1;
-    Matrix1<int> m2;
-    Matrix1<int> m3;
-    Matrix1<int> m4;
+void Print2(string str, X *px) { cout << str << px->ToString() << endl; }
+void Print2(string str, X &x)  { Print2(str, &x); }
 
-    istringstream datosM2("2 2 1 2 3 4");
-    istringstream datosM3("2 2 1 0 0 1");
-    istringstream datosM4("2 2 2 3 4 5");
+void ModifyMember(X &x , TX X::*pAtt1, TX val) { x.*pAtt1   = val; }
+void ModifyMember(X *px, TX X::*pAtt1, TX val) { px->*pAtt1 = val; }
 
-    datosM2 >> m2;
-    datosM3 >> m3;
-    datosM4 >> m4;
+void DemoPointersToMembers(){
+    // Objeto estático
+    X obj(20, 10);
+    // Objeto Dinámico
+    X *pObj = nullptr;
+    pObj = new X(60, 15);
+    X &rObj = *pObj;
 
-    cout << "\nMatriz m2:\n";
-    cout << m2;
+    // Operaciones con un objeto estático
+    obj.setA(25);
+    obj.m_a = 40;
+    // Operaciones con un objeto dinámico
+    pObj->setA(30);
+    pObj->m_a = 50;
+    // Operaciones con una referencia a un objeto
+    rObj.setA(35);
+    rObj.m_a = 45;
 
-    cout << "\nMatriz m3:\n";
-    cout << m3;
+    cout << "Manipuando miembros con punteros directos a cada miembro" << endl;
+    TX *ptr = &obj.m_a;
+    Print1("Antes   :", obj);
+    *ptr = 100;
+    Print1("Después :", obj);
 
-    cout << "\nMatriz m4:\n";
-    cout << m4;
+    ptr = &pObj->m_a;
+    Print1("Antes   :", *pObj);
+    *ptr = 200;
+    Print1("Después :", *pObj);
 
-    Matrix1<int> copia(m2);
+    cout << "Manipulando miembros con punteros a miembros" << endl;
+    TX X::*apAtt[2] = {&X::m_a, &X::m_b};
+    TX X::*pAtt = &X::m_a;
+    Print1("Antes   :", obj);
+    obj.*pAtt = 500;
+    Print1("Después :", obj);
 
-    cout << "\nCopia de m2:\n";
-    cout << copia;
+    Print1("Antes   :", *pObj);
+    pObj->*pAtt = 600;
+    Print1("Después :", *pObj);
 
-    m1 = 5*m2 + m3*m4;
+    cout << "Manipulando miembros cambiantes ..." << endl;
+    Print1("Antes   :", obj);
+    ModifyMember(obj, &X::m_a, 700);
+    Print1("Después1:", obj);
+    ModifyMember(obj, pAtt, 750);
+    Print1("Después2:", obj);
+    ModifyMember(obj, &X::m_b, 800);
+    Print1("Después3:", obj);
 
-    cout << "\nResultado de m1 = 5*m2 + m3*m4:\n";
-    cout << m1;
-}
-void DemoMatrixCorchetes() {
-    cout << "\nDemo usando operador corchete\n";
+    cout << "Ahora con punteros a objetos dinámicos ..." << endl;
+    auto x = 0;
+    Print1("Antes   :", pObj);
+    // apAtt[0] es un puntero a miembro que apunta a m_a
+    ModifyMember(pObj, apAtt[x++], 900);
+    Print1("Después1:", pObj);
+    // apAtt[1] es un puntero a miembro que apunta a m_b
+    ModifyMember(pObj, apAtt[x], 950);
+    Print1("Después2:", pObj);
 
-    Matrix1<int> m(4, 4);
+    cout << "Ahora llamar a metodos con punteros a miembros" << endl;
+    TX (X::*pMet)() const = &X::Suma;
+    Print1("Antes (estatico)  : ", obj);
+    TX result = (obj.*pMet)();
+    cout << "Suma: " << result << endl;
+    Print1("Después(estatico) :", obj);
 
-    m[3][2] = 8;
+    Print1("Antes  (dinamico) :", pObj);
+    result = (pObj->*pMet)();
+    cout << "Suma: " << result << endl;
+    Print1("Después(dinamico) :", pObj);
 
-    cout << "Matriz m:\n";
-    cout << m;
+    cout << "Ahora con un arreglo de punteros a metodos ..." << endl;
+    TX (X::*vpMet[4])() const = {&X::Suma    , &X::Resta, 
+                                 &X::Producto, &X::Division};
+    obj.setA(40); obj.setB(10);
+    Print1("Antes  (estatico)  : ", obj);
+    for(auto i = 0; i < 4; ++i) {
+        result = (obj.*vpMet[i])();
+        cout << "Resultado: " << result << endl;
+    }
+
+    pObj->setA(50); pObj->setB(20);
+    Print1("Antes  (dinamico) :", pObj);
+    for(auto i = 0; i < 4; ++i) {
+        result = (pObj->*vpMet[i])();
+        cout << "Resultado: " << result << endl;
+    } 
+    delete pObj;
 }

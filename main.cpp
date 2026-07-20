@@ -21,9 +21,8 @@ int main() {
     // DemoPointersVector1();
     // DemoPointersVector2();
     // DemoPointersVector3();
-    //DemoPointersVector4();
-    //DemoPointersVector5();
-    //DemoPointersMoveConstructor();
-    DemoMatrixCorchetes();
+    // DemoPointersVector4();
+    // DemoPointersVector5();
+    DemoPointersToMembers();
     return 0;
 }

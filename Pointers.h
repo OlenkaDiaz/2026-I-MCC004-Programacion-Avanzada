@@ -11,7 +11,6 @@ void DemoPointersVector5();
 void DemoPointersMatrix1();
 void DemoPointersMatrix2();
 
-void DemoPointersMoveConstructor();
-void DemoMatrixCorchetes();
+void DemoPointersToMembers();
 
 #endif // __POINTERS_H__
