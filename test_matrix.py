@@ -1,12 +1,12 @@
-from matrix_py import Matrix1, MatrixFloat
+from matrix_py import MatrixInt, MatrixFloat
 
 print("Demo: usar matriz de C++ desde Python")
 # ==================================================
-# PRUEBA CON Matrix1<int>
+# PRUEBA CON MatrixInt
 # ==================================================
 print("\n=== MATRICES DE ENTEROS ===")
-A = Matrix1(2, 2)
-B = Matrix1(2, 2)
+A = MatrixInt(2, 2)
+B = MatrixInt(2, 2)
 
 A[0][0] = 1
 A[0][1] = 2
@@ -38,12 +38,12 @@ print("Filas de A:", A.rows())
 print("Columnas de A:", A.cols())
 
 print("\nDemo de m[3][2] = 8")
-M = Matrix1(4, 4)
+M = MatrixInt(4, 4)
 M[3][2] = 8
 print(M)
 
 # ==================================================
-# PRUEBA CON Matrix1<float>
+# PRUEBA CON Matrixfloat
 # ==================================================
 
 print("\n=== MATRICES DE DECIMALES ===")

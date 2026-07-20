@@ -31,8 +31,8 @@ PYBIND11_MODULE(matrix_py, m) {
     py::class_<Fila<float>>(m, "FilaFloat")
         .def("__getitem__", &Fila<float>::get)
         .def("__setitem__", &Fila<float>::set);
-    // Matrix1<int> se llamará Matrix1 en Python
-    py::class_<Matrix1<int>>(m, "Matrix1")
+    // Matrix1<T> con T = int se llamará MatrixInt en Python
+    py::class_<Matrix1<int>>(m, "MatrixInt")
         .def(py::init<size_t, size_t>())
 
         .def("__getitem__", [](Matrix1<int> &matriz, size_t fila) {
@@ -51,9 +51,14 @@ PYBIND11_MODULE(matrix_py, m) {
             std::ostringstream os;
             os << matriz;
             return os.str();
+        })
+        .def("__repr__", [](Matrix1<int> &matriz) {
+            std::ostringstream os;
+            os << matriz;
+            return os.str();
         });
 
-        // Matrix1<float> se llamará MatrixFloat en Python
+        // Matrix1<T> con T = float se llamará MatrixFloat en Python
     py::class_<Matrix1<float>>(m, "MatrixFloat")
         .def(py::init<size_t, size_t>())
 
