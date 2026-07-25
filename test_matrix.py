@@ -1,12 +1,15 @@
-from matrix_py import Matrix1, MatrixFloat
+from matrix_py import MatrixInt, MatrixFloat
 
 print("Demo: usar matriz de C++ desde Python")
+
 # ==================================================
-# PRUEBA CON Matrix1<int>
+# PRUEBA CON MATRICES DE ENTEROS
 # ==================================================
+
 print("\n=== MATRICES DE ENTEROS ===")
-A = Matrix1(2, 2)
-B = Matrix1(2, 2)
+
+A = MatrixInt(2, 2)
+B = MatrixInt(2, 2)
 
 A[0][0] = 1
 A[0][1] = 2
@@ -30,20 +33,29 @@ print("\nResultado C = A * B:")
 print(C)
 
 print("\nExtra: usar get y set")
+
 A.set(0, 0, 10)
-print("Nuevo valor de A[0][0]:", A.get(0, 0))
+
+print(
+    "Nuevo valor de A[0][0]:",
+    A.get(0, 0)
+)
 
 print("\nExtra: filas y columnas")
+
 print("Filas de A:", A.rows())
 print("Columnas de A:", A.cols())
 
-print("\nDemo de m[3][2] = 8")
-M = Matrix1(4, 4)
+print("\nDemo de M[3][2] = 8")
+
+M = MatrixInt(4, 4)
+
 M[3][2] = 8
+
 print(M)
 
 # ==================================================
-# PRUEBA CON Matrix1<float>
+# PRUEBA CON MATRICES DECIMALES
 # ==================================================
 
 print("\n=== MATRICES DE DECIMALES ===")
@@ -72,10 +84,16 @@ print(G)
 print("\nResultado H = F * G:")
 print(H)
 
-print("\nPrueba get y set con float")
+print("\nPrueba get y set con decimales")
+
 F.set(0, 0, 7.25)
-print("Nuevo valor de F[0][0]:", F.get(0, 0))
+
+print(
+    "Nuevo valor de F[0][0]:",
+    F.get(0, 0)
+)
 
 print("\nFilas y columnas de F")
+
 print("Filas de F:", F.rows())
 print("Columnas de F:", F.cols())
