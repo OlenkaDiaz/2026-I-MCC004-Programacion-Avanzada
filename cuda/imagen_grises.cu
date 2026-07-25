@@ -1,126 +1,237 @@
- #include <iostream>
+
+#include <iostream>
 #include <fstream>
 #include <vector>
+#include <string>
+#include <cstddef>
 #include <cuda_runtime.h>
 
 using namespace std;
 
 // Cada hilo transforma un pixel de color a escala de grises.
+template <
+    typename TPixel,
+    typename TCalculo
+>
 __global__ void convertirAGris(
-    const unsigned char* imagenColor,
-    unsigned char* imagenGris,
-    int ancho,
-    int alto
+    const TPixel* imagenColor,
+    TPixel* imagenGris,
+    size_t ancho,
+    size_t alto
 ) {
-    int x = blockIdx.x * blockDim.x + threadIdx.x;
-    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    size_t x =
+        static_cast<size_t>(blockIdx.x) *
+        static_cast<size_t>(blockDim.x) +
+        static_cast<size_t>(threadIdx.x);
+
+    size_t y =
+        static_cast<size_t>(blockIdx.y) *
+        static_cast<size_t>(blockDim.y) +
+        static_cast<size_t>(threadIdx.y);
 
     if (x < ancho && y < alto) {
-        int posicion = y * ancho + x;
-        int indiceColor = posicion * 3;
+        size_t posicion =
+            y * ancho + x;
 
-        unsigned char rojo = imagenColor[indiceColor];
-        unsigned char verde = imagenColor[indiceColor + 1];
-        unsigned char azul = imagenColor[indiceColor + 2];
+        size_t indiceColor =
+            posicion * 3;
 
-        imagenGris[posicion] = static_cast<unsigned char>(
-            0.299f * rojo +
-            0.587f * verde +
-            0.114f * azul
-        );
+        TPixel rojo =
+            imagenColor[indiceColor];
+
+        TPixel verde =
+            imagenColor[indiceColor + 1];
+
+        TPixel azul =
+            imagenColor[indiceColor + 2];
+
+        TCalculo nivelGris =
+            static_cast<TCalculo>(0.299) *
+            static_cast<TCalculo>(rojo)
+            +
+            static_cast<TCalculo>(0.587) *
+            static_cast<TCalculo>(verde)
+            +
+            static_cast<TCalculo>(0.114) *
+            static_cast<TCalculo>(azul);
+
+        imagenGris[posicion] =
+            static_cast<TPixel>(nivelGris);
     }
 }
 
 // Guarda una imagen a color.
+template <typename TPixel>
 void guardarPPM(
     const string& nombre,
-    const vector<unsigned char>& imagen,
-    int ancho,
-    int alto
+    const vector<TPixel>& imagen,
+    size_t ancho,
+    size_t alto
 ) {
-    ofstream archivo(nombre, ios::binary);
+    ofstream archivo(
+        nombre,
+        ios::binary
+    );
 
     archivo << "P6\n";
-    archivo << ancho << " " << alto << "\n";
+    archivo
+        << ancho
+        << " "
+        << alto
+        << "\n";
+
     archivo << "255\n";
 
     archivo.write(
-        reinterpret_cast<const char*>(imagen.data()),
-        imagen.size()
+        reinterpret_cast<const char*>(
+            imagen.data()
+        ),
+        static_cast<streamsize>(
+            imagen.size() *
+            sizeof(TPixel)
+        )
     );
 }
 
 // Guarda una imagen en escala de grises.
+template <typename TPixel>
 void guardarPGM(
     const string& nombre,
-    const vector<unsigned char>& imagen,
-    int ancho,
-    int alto
+    const vector<TPixel>& imagen,
+    size_t ancho,
+    size_t alto
 ) {
-    ofstream archivo(nombre, ios::binary);
+    ofstream archivo(
+        nombre,
+        ios::binary
+    );
 
     archivo << "P5\n";
-    archivo << ancho << " " << alto << "\n";
+    archivo
+        << ancho
+        << " "
+        << alto
+        << "\n";
+
     archivo << "255\n";
 
     archivo.write(
-        reinterpret_cast<const char*>(imagen.data()),
-        imagen.size()
+        reinterpret_cast<const char*>(
+            imagen.data()
+        ),
+        static_cast<streamsize>(
+            imagen.size() *
+            sizeof(TPixel)
+        )
     );
 }
 
-int main() {
-    const int ancho = 512;
-    const int alto = 512;
-    const int cantidadPixeles = ancho * alto;
+// Ejecuta todo el procesamiento usando plantillas.
+template <
+    typename TPixel,
+    typename TCalculo
+>
+void ejecutarConversionImagen() {
+    const size_t ancho = 512;
+    const size_t alto = 512;
 
-    vector<unsigned char> imagenColor(cantidadPixeles * 3);
-    vector<unsigned char> imagenGris(cantidadPixeles);
+    const size_t cantidadPixeles =
+        ancho * alto;
 
-    // Crear una imagen de colores para la demostracion.
-    for (int y = 0; y < alto; y++) {
-        for (int x = 0; x < ancho; x++) {
-            int posicion = y * ancho + x;
-            int indice = posicion * 3;
+    vector<TPixel> imagenColor(
+        cantidadPixeles * 3
+    );
+
+    vector<TPixel> imagenGris(
+        cantidadPixeles
+    );
+
+    // Crear una imagen de colores.
+    for (
+        size_t y = 0;
+        y < alto;
+        y++
+    ) {
+        for (
+            size_t x = 0;
+            x < ancho;
+            x++
+        ) {
+            size_t posicion =
+                y * ancho + x;
+
+            size_t indice =
+                posicion * 3;
 
             imagenColor[indice] =
-                static_cast<unsigned char>(x * 255 / ancho);
+                static_cast<TPixel>(
+                    x * 255 / ancho
+                );
 
             imagenColor[indice + 1] =
-                static_cast<unsigned char>(y * 255 / alto);
+                static_cast<TPixel>(
+                    y * 255 / alto
+                );
 
-            imagenColor[indice + 2] = 150;
+            imagenColor[indice + 2] =
+                static_cast<TPixel>(150);
         }
     }
 
-    unsigned char* gpuColor;
-    unsigned char* gpuGris;
+    TPixel* gpuColor;
+    TPixel* gpuGris;
+
+    size_t tamanioColor =
+        cantidadPixeles *
+        3 *
+        sizeof(TPixel);
+
+    size_t tamanioGris =
+        cantidadPixeles *
+        sizeof(TPixel);
 
     cudaMalloc(
         reinterpret_cast<void**>(&gpuColor),
-        cantidadPixeles * 3 * sizeof(unsigned char)
+        tamanioColor
     );
 
     cudaMalloc(
         reinterpret_cast<void**>(&gpuGris),
-        cantidadPixeles * sizeof(unsigned char)
+        tamanioGris
     );
 
     cudaMemcpy(
         gpuColor,
         imagenColor.data(),
-        cantidadPixeles * 3 * sizeof(unsigned char),
+        tamanioColor,
         cudaMemcpyHostToDevice
     );
 
     dim3 hilosPorBloque(16, 16);
 
     dim3 cantidadBloques(
-        (ancho + hilosPorBloque.x - 1) / hilosPorBloque.x,
-        (alto + hilosPorBloque.y - 1) / hilosPorBloque.y
+        static_cast<unsigned int>(
+            (
+                ancho +
+                hilosPorBloque.x -
+                1
+            ) / hilosPorBloque.x
+        ),
+
+        static_cast<unsigned int>(
+            (
+                alto +
+                hilosPorBloque.y -
+                1
+            ) / hilosPorBloque.y
+        )
     );
 
-    convertirAGris<<<cantidadBloques, hilosPorBloque>>>(
+    convertirAGris<
+        TPixel,
+        TCalculo
+    >
+    <<<cantidadBloques, hilosPorBloque>>>(
         gpuColor,
         gpuGris,
         ancho,
@@ -132,18 +243,18 @@ int main() {
     cudaMemcpy(
         imagenGris.data(),
         gpuGris,
-        cantidadPixeles * sizeof(unsigned char),
+        tamanioGris,
         cudaMemcpyDeviceToHost
     );
 
-    guardarPPM(
+    guardarPPM<TPixel>(
         "imagen_color.ppm",
         imagenColor,
         ancho,
         alto
     );
 
-    guardarPGM(
+    guardarPGM<TPixel>(
         "imagen_gris.pgm",
         imagenGris,
         ancho,
@@ -153,8 +264,25 @@ int main() {
     cudaFree(gpuColor);
     cudaFree(gpuGris);
 
-    cout << "Imagen procesada correctamente con CUDA." << endl;
-    cout << "Se crearon imagen_color.ppm e imagen_gris.pgm." << endl;
+    cout
+        << "Imagen procesada correctamente con CUDA."
+        << endl;
+
+    cout
+        << "Se crearon imagen_color.ppm "
+        << "e imagen_gris.pgm."
+        << endl;
+}
+
+int main() {
+    // Tipos concretos que reemplazarán a las plantillas.
+    using TipoPixel = unsigned char;
+    using TipoCalculo = float;
+
+    ejecutarConversionImagen<
+        TipoPixel,
+        TipoCalculo
+    >();
 
     return 0;
 }
